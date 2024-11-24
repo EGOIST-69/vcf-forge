@@ -135,20 +135,22 @@ END:VCARD`;
       {getStarted && (
         <div>
           <div>
-            <table className="table-auto border-collapse rounded-2xl   border-red-500 w-full">
+            <table className="table-auto border-collapse rounded-2xl border-red-500 w-full">
               <thead>
                 <tr>
-                  <th className="bg-red-500 py-3 px-3 rounded-tl-2xl">Index</th>
-                  <th className="bg-red-500 py-3 px-32 border-l border-l-slate-950">
+                  <th className="bg-red-500 py-3 px-3 rounded-tl-2xl text-xs sm:text-base">
+                    Index
+                  </th>
+                  <th className="bg-red-500 py-3 px-5 sm:px-32 border-l border-l-slate-950 text-xs sm:text-base">
                     Name
                   </th>
-                  <th className="bg-red-500 py-3 px-32 border-l border-l-slate-950">
+                  <th className="bg-red-500 py-3 px-5 sm:px-32 border-l border-l-slate-950 text-xs sm:text-base">
                     Email Address
                   </th>
-                  <th className="bg-red-500 py-3 px-32 border-l border-l-slate-950">
+                  <th className="bg-red-500 py-3 px-5 sm:px-32 border-l border-l-slate-950 text-xs sm:text-base">
                     Phone
                   </th>
-                  <th className="bg-red-500 py-3 px-10 rounded-tr-2xl border-l border-l-slate-950">
+                  <th className="bg-red-500 py-3 px-3 rounded-tr-2xl border-l border-l-slate-950 text-xs sm:text-base">
                     Action
                   </th>
                 </tr>
@@ -163,29 +165,28 @@ END:VCARD`;
                     <td className="text-center py-2">{contact.name}</td>
                     <td className="text-center py-2">{contact.email}</td>
                     <td className="text-center py-2">{contact.number}</td>
-                    <td className=" justify-evenly py-2 flex">
+                    <td className="justify-evenly py-2 flex space-x-2">
                       <button
                         onClick={() => handleDelete(contact)}
-                        className="  hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300  rounded-md p-2 flex justify-center items-center"
+                        className="hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 rounded-md p-2 flex justify-center items-center"
                       >
                         <MdDeleteForever />
                       </button>
                       {/* <button
-                        onClick={() => handleEdit(index)}
-                        className="  hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 
-                      
-                       rounded-md p-2 flex justify-center items-center"
-                      >
-                        <LuFileEdit />
-                      </button> */}
+                onClick={() => handleEdit(index)}
+                className="hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 rounded-md p-2 flex justify-center items-center"
+              >
+                <LuFileEdit />
+              </button> */}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <div className="flex mt-5 space-x-5">
-            <div className="w-1/2">
+
+          <div className="md:flex md:flex-row grid grid-cols-3  mt-5 space-y-5 sm:space-y-0 sm:space-x-5">
+            <div className="w-full">
               <button
                 onClick={generatevcf}
                 className="w-full bg-red-500 hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center"
@@ -193,7 +194,7 @@ END:VCARD`;
                 Confirm & Download
               </button>
             </div>
-            <div className="w-1/2">
+            <div className="w-full">
               <button
                 className="bg-red-500 w-full hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center"
                 onClick={() =>
@@ -204,7 +205,7 @@ END:VCARD`;
                 Add
               </button>
               <dialog id="my_modal_3" className="modal">
-                <div className="modal-box bg-slate-950 border border-red-500">
+                <div className="modal-box bg-slate-950 border border-red-500 max-w-lg mx-auto">
                   <form method="dialog">
                     <button
                       type="button"
@@ -232,32 +233,33 @@ END:VCARD`;
                       type="text"
                       name="name"
                       placeholder="Name"
-                      className="bg-slate-950 border-b border-red-500 outline-none"
+                      className="bg-slate-950 border-b border-red-500 outline-none w-full"
                     />
                     <input
                       type="email"
                       name="email"
                       placeholder="Email Address"
-                      className="bg-slate-950 border-b border-red-500 outline-none"
+                      className="bg-slate-950 border-b border-red-500 outline-none w-full"
                     />
                     <input
                       required
                       type="text"
                       name="number"
                       placeholder="Phone number"
-                      className="bg-slate-950 border-b border-red-500 outline-none"
+                      className="bg-slate-950 border-b border-red-500 outline-none w-full"
                     />
 
                     <input
                       type="submit"
                       value="Submit"
-                      className="bg-red-500 w-1/3 mt-7 hover:scale-110 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center"
+                      className="bg-red-500 w-full sm:w-1/3 mt-7 hover:scale-110 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center"
                     />
                   </form>
                 </div>
               </dialog>
             </div>
-            <div className="w-1/2">
+
+            <div className="w-full">
               <button
                 onClick={() => {
                   Swal.fire({
