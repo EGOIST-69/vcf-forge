@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
+// import { LuFileEdit } from "react-icons/lu";
+import { MdDeleteForever } from "react-icons/md";
+import { TiCancel } from "react-icons/ti";
+import Swal from "sweetalert2";
 
 const Main = () => {
   const [getStarted, setGetStarted] = useState(false);
   const [contacts, setContacts] = useState([]);
+  const [editingContact, setEditingContact] = useState(null);
 
   const handleInfo = (event) => {
     event.preventDefault();
@@ -13,8 +18,101 @@ const Main = () => {
     const email = form.email.value;
     const number = form.number.value;
     const contact = { name, email, number };
-    setContacts((prevContacts) => [...prevContacts, contact]);
+    if (editingContact !== null) {
+      setContacts((prevContacts) =>
+        prevContacts.map((item, index) =>
+          index === editingContact ? contact : item
+        )
+      );
+      setEditingContact(null);
+    } else {
+      setContacts((prevContacts) => [...prevContacts, contact]);
+    }
     document.getElementById("my_modal_3").close();
+  };
+
+  const handleDelete = (singleContact) => {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+      buttonsStyling: false,
+    });
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const newContacts = contacts.filter(
+            (contact) =>
+              contact.name !== singleContact.name ||
+              contact.email !== singleContact.email ||
+              contact.number !== singleContact.number
+          );
+          setContacts(newContacts);
+
+          swalWithBootstrapButtons.fire({
+            title: "Deleted!",
+            text: "Your information has been deleted.",
+            icon: "success",
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: "Cancelled",
+            text: "Information was not deleted :)",
+            icon: "error",
+          });
+        }
+      });
+  };
+
+  // const handleEdit = (index) => {
+  //   if (index >= 0 && index < contacts.length) {
+  //     const contact = contacts[index];
+  //     setEditingContact(index);
+  //     document.getElementById("name").value = contact.name;
+  //     document.getElementById("email").value = contact.email;
+  //     document.getElementById("number").value = contact.number;
+  //     document.getElementById("my_modal_3").showModal();
+  //   } else {
+  //     console.error("Invalid index for editing contact:", index);
+  //   }
+  // };
+
+  const generatevcf = () => {
+    const vcfData = contacts
+      .map((contact) => {
+        const formattedNumber = contact.number.replace(/[^0-9+]/g, "");
+        return `
+BEGIN:VCARD
+VERSION:3.0
+FN:${contact.name}
+TEL;TYPE=CELL:${formattedNumber}
+EMAIL:${contact.email}
+END:VCARD`;
+      })
+      .join("\n");
+
+    const blob = new Blob([vcfData], { type: "text/vcard" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "contacts.vcf";
+    link.click();
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your VCF file has been created and downloaded",
+      showConfirmButton: false,
+      timer: 1500,
+    });
   };
 
   return (
@@ -37,8 +135,8 @@ const Main = () => {
       {getStarted && (
         <div>
           <div>
-            <table className="table-auto border-collapse border  border-red-500 w-full">
-              <thead className="rounded-2xl">
+            <table className="table-auto border-collapse rounded-2xl   border-red-500 w-full">
+              <thead>
                 <tr>
                   <th className="bg-red-500 py-3 px-3 rounded-tl-2xl">Index</th>
                   <th className="bg-red-500 py-3 px-32 border-l border-l-slate-950">
@@ -65,8 +163,21 @@ const Main = () => {
                     <td className="text-center py-2">{contact.name}</td>
                     <td className="text-center py-2">{contact.email}</td>
                     <td className="text-center py-2">{contact.number}</td>
-                    <td className="text-center py-2">
-                      <button className="text-red-500">Delete</button>
+                    <td className=" justify-evenly py-2 flex">
+                      <button
+                        onClick={() => handleDelete(contact)}
+                        className="  hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300  rounded-md p-2 flex justify-center items-center"
+                      >
+                        <MdDeleteForever />
+                      </button>
+                      {/* <button
+                        onClick={() => handleEdit(index)}
+                        className="  hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 
+                      
+                       rounded-md p-2 flex justify-center items-center"
+                      >
+                        <LuFileEdit />
+                      </button> */}
                     </td>
                   </tr>
                 ))}
@@ -75,7 +186,10 @@ const Main = () => {
           </div>
           <div className="flex mt-5 space-x-5">
             <div className="w-1/2">
-              <button className="w-full bg-red-500 hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center">
+              <button
+                onClick={generatevcf}
+                className="w-full bg-red-500 hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center"
+              >
                 Confirm & Download
               </button>
             </div>
@@ -142,6 +256,34 @@ const Main = () => {
                   </form>
                 </div>
               </dialog>
+            </div>
+            <div className="w-1/2">
+              <button
+                onClick={() => {
+                  Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!",
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      setContacts([]);
+                      Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success",
+                      });
+                    }
+                  });
+                }}
+                className="w-full bg-red-500 hover:scale-105 border-red-500 border-2 hover:text-red-500 hover:font-normal ease-in-out hover:bg-white transform duration-300 mx-auto rounded-md p-3 flex justify-center items-center"
+              >
+                <TiCancel className="mr-2 scale-150" />
+                Cancel
+              </button>
             </div>
           </div>
         </div>
